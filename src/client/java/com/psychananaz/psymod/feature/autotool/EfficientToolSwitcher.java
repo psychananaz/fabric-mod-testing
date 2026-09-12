@@ -1,7 +1,11 @@
 package com.psychananaz.psymod.feature.autotool;
 
+import java.util.logging.Logger;
+
 import com.mojang.blaze3d.platform.InputConstants;
 import com.psychananaz.psymod.ModHelper;
+import com.psychananaz.psymod.PsyMod;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
@@ -49,9 +53,8 @@ public final class EfficientToolSwitcher {
         }
 
         if (toggleKey.consumeClick()) {
+            PsyMod.LOGGER.info("Auto tool " + (!enabled ? "enabled" : "disabled"));
             enabled = !enabled;
-            player.sendOverlayMessage(Component.literal(enabled ? "Auto tool enabled" : "Auto tool disabled").withColor(enabled ? TextColor.GREEN : TextColor.RED));
-
         }
 
         if (!enabled || !CLIENT.options.keyAttack.isDown() || CLIENT.gameMode == null) {
