@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 public final class PsyModClient implements ClientModInitializer {
 	public static void showNotification(Component message) {
 		Minecraft client = Minecraft.getInstance();
-		if (GlobalConfig.INSTANCE.showNotifications && client.player != null) {
+		if (ModConfig.INSTANCE.showNotifications && client.player != null) {
 			client.gui.hud.setOverlayMessage(message, false);
 		}
 	}

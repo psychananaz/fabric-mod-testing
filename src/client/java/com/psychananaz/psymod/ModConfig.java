@@ -17,15 +17,23 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsScreen;
+import net.minecraft.network.chat.TextColor;
 
 public final class ModConfig {
 
+    public static final boolean DEFAULT_ENABLED = true;
+    public static final boolean DEFAULT_SHOW_NOTIFICATIONS = true;
+    public static final boolean DEFAULT_VERBOSE_LOGGING = false;
     public static final boolean DEFAULT_USE_AUTO_TOOL = false;
-    public static final boolean DEFAULT_USE_AUTO_TOOL_KEYBIND = false;
+    public static final boolean DEFAULT_ENABLE_BYPASS = false;
     public static final ModConfig INSTANCE = new ModConfig();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("psymod.toml");
+
+    public boolean enabled = DEFAULT_ENABLED;
+    public boolean showNotifications = DEFAULT_SHOW_NOTIFICATIONS;
+    public boolean verboseLogging = DEFAULT_VERBOSE_LOGGING;
     public boolean useAutoTool = DEFAULT_USE_AUTO_TOOL;
-    public boolean useAutoToolKeybind = DEFAULT_USE_AUTO_TOOL_KEYBIND;
+    public boolean enableBypass = DEFAULT_ENABLE_BYPASS;
 
     private ModConfig() {
     }
@@ -42,9 +50,9 @@ public final class ModConfig {
                                         .description(OptionDescription.of(literal(
                                                 "Pause mod features without changing their individual settings.")))
                                         .binding(
-                                                GlobalConfig.DEFAULT_ENABLED,
-                                                () -> GlobalConfig.INSTANCE.enabled,
-                                                value -> GlobalConfig.INSTANCE.enabled = value)
+                                                DEFAULT_ENABLED,
+                                                () -> enabled,
+                                                value -> enabled = value)
                                         .controller(option -> BooleanControllerBuilder.create(option)
                                                 .onOffFormatter()
                                                 .coloured(true))
@@ -54,9 +62,9 @@ public final class ModConfig {
                                         .description(OptionDescription.of(literal(
                                                 "Show brief on-screen confirmations when settings are saved.")))
                                         .binding(
-                                                GlobalConfig.DEFAULT_SHOW_NOTIFICATIONS,
-                                                () -> GlobalConfig.INSTANCE.showNotifications,
-                                                value -> GlobalConfig.INSTANCE.showNotifications = value)
+                                                DEFAULT_SHOW_NOTIFICATIONS,
+                                                () -> showNotifications,
+                                                value -> showNotifications = value)
                                         .controller(option -> BooleanControllerBuilder.create(option)
                                                 .onOffFormatter()
                                                 .coloured(true))
@@ -66,9 +74,9 @@ public final class ModConfig {
                                         .description(OptionDescription.of(literal(
                                                 "Write additional diagnostic details to the game log.")))
                                         .binding(
-                                                GlobalConfig.DEFAULT_VERBOSE_LOGGING,
-                                                () -> GlobalConfig.INSTANCE.verboseLogging,
-                                                value -> GlobalConfig.INSTANCE.verboseLogging = value)
+                                                DEFAULT_VERBOSE_LOGGING,
+                                                () -> verboseLogging,
+                                                value -> verboseLogging = value)
                                         .controller(option -> BooleanControllerBuilder.create(option)
                                                 .onOffFormatter()
                                                 .coloured(true))
@@ -80,7 +88,7 @@ public final class ModConfig {
                                 "Automatically switch to the most efficient tool when breaking blocks.").withStyle(ChatFormatting.GRAY))
                         .options(List.of(
                                 Option.<Boolean>createBuilder()
-                                        .name(literal("Enable AutoTool"))
+                                        .name(literal("Enabled"))
                                         .description(OptionDescription.of(literal(
                                                 "Whether AutoTool is enabled.")))
                                         .binding(
@@ -92,20 +100,20 @@ public final class ModConfig {
                                                 .coloured(true))
                                         .build(),
                                 Option.<Boolean>createBuilder()
-                                        .name(literal("Enable Keybind"))
+                                        .name(literal("Bypass"))
                                         .description(OptionDescription.of(literal(
-                                                "Whether AutoTool can be toggled using the assigned key.")))
+                                                "Prevents tool switching when holding the configured key.")))
                                         .binding(
-                                                DEFAULT_USE_AUTO_TOOL_KEYBIND,
-                                                () -> useAutoToolKeybind,
-                                                value -> useAutoToolKeybind = value)
+                                                DEFAULT_ENABLE_BYPASS,
+                                                () -> enableBypass,
+                                                value -> enableBypass = value)
                                         .controller(option -> BooleanControllerBuilder.create(option)
                                                 .onOffFormatter()
                                                 .coloured(true))
                                         .build(),
                                 ButtonOption.createBuilder()
                                         .name(literal("Controls"))
-                                        .text(literal("Configure Keybind"))
+                                        .text(literal("Open Key Binds").withColor(TextColor.GRAY))
                                         .description(OptionDescription.of(literal(
                                                 "Open Minecraft's Key Binds screen.")))
                                         .action((screen, button) -> {
@@ -122,18 +130,15 @@ public final class ModConfig {
     public void load() {
         try (CommentedFileConfig config = openConfig()) {
             config.load();
-            Object value = config.getOrElse("useAutoTool", DEFAULT_USE_AUTO_TOOL);
-            if (!(value instanceof Boolean enabled)) {
-                throw new IllegalStateException("useAutoTool must be a boolean in " + CONFIG_PATH);
-            }
-            Object keybindValue = config.getOrElse("useAutoToolKeybind", DEFAULT_USE_AUTO_TOOL_KEYBIND);
-            if (!(keybindValue instanceof Boolean keybindEnabled)) {
-                throw new IllegalStateException("useAutoToolKeybind must be a boolean in " + CONFIG_PATH);
-            }
-            useAutoTool = enabled;
-            useAutoToolKeybind = keybindEnabled;
+            enabled = readBoolean(config, "general.enabled", DEFAULT_ENABLED);
+            showNotifications = readBoolean(config, "general.showNotifications", DEFAULT_SHOW_NOTIFICATIONS);
+            verboseLogging = readBoolean(config, "general.verboseLogging", DEFAULT_VERBOSE_LOGGING);
+            useAutoTool = readBoolean(config, "useAutoTool", DEFAULT_USE_AUTO_TOOL);
+            enableBypass = readBoolean(config, "enableBypass", DEFAULT_ENABLE_BYPASS);
 
-            if (!config.contains("useAutoTool") || !config.contains("useAutoToolKeybind")) {
+            if (!config.contains("general.enabled") || !config.contains("general.showNotifications")
+                    || !config.contains("general.verboseLogging") || !config.contains("useAutoTool")
+                    || !config.contains("enableBypass")) {
                 write(config);
             }
         }
@@ -153,15 +158,37 @@ public final class ModConfig {
     }
 
     private void write(CommentedFileConfig config) {
+        config.set("general.enabled", enabled);
+        if (config.getComment("general.enabled") == null) {
+            config.setComment("general.enabled", " Enable mod features without changing their individual settings.");
+        }
+        config.set("general.showNotifications", showNotifications);
+        if (config.getComment("general.showNotifications") == null) {
+            config.setComment("general.showNotifications", " Show brief on-screen confirmations when settings are saved.");
+        }
+        config.set("general.verboseLogging", verboseLogging);
+        if (config.getComment("general.verboseLogging") == null) {
+            config.setComment("general.verboseLogging", " Log additional diagnostic details for all mod features.");
+        }
+
         config.set("useAutoTool", useAutoTool);
         if (config.getComment("useAutoTool") == null) {
             config.setComment("useAutoTool", " Automatically switch to the most efficient tool when breaking blocks.");
         }
-        config.set("useAutoToolKeybind", useAutoToolKeybind);
-        if (config.getComment("useAutoToolKeybind") == null) {
-            config.setComment("useAutoToolKeybind", " Enable the AutoTool toggle key assigned in Minecraft's Controls menu.");
+
+        config.set("enableBypass", enableBypass);
+        if (config.getComment("enableBypass") == null) {
+            config.setComment("enableBypass", " Enable bypass functionality.");
         }
-        GlobalConfig.INSTANCE.writeTo(config);
+
         config.save();
+    }
+
+    private boolean readBoolean(CommentedFileConfig config, String key, boolean defaultValue) {
+        Object value = config.getOrElse(key, defaultValue);
+        if (!(value instanceof Boolean setting)) {
+            throw new IllegalStateException(key + " must be a boolean in " + CONFIG_PATH);
+        }
+        return setting;
     }
 }
