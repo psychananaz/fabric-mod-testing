@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
@@ -24,18 +25,20 @@ public final class ModConfig {
 
     public Screen createGui(Screen parent) {
         return YetAnotherConfigLib.createBuilder()
-                .title(literal("Efficient Tool Switcher"))
+                .title(literal("psymod Settings"))
                 .category(ConfigCategory.createBuilder()
-                        .name(literal("General"))
-                        .tooltip(literal(
-                                "Automatically switches to the most efficient tool for the block you are breaking."))
+                        .name(literal("psymod"))
                         .option(Option.<Boolean>createBuilder()
-                                .name(literal("Enable Efficient Tool Switching"))
+                                .name(literal("Auto Tool"))
+                                .description(OptionDescription.of(literal(
+                                        "Automatically select the best tool in your hotbar while mining.")))
                                 .binding(
                                         DEFAULT_USE_AUTO_TOOL,
                                         () -> useAutoTool,
                                         value -> useAutoTool = value)
-                                .controller(BooleanControllerBuilder::create)
+                                .controller(option -> BooleanControllerBuilder.create(option)
+                                        .onOffFormatter()
+                                        .coloured(false))
                                 .build())
                         .build())
                 .save(this::save)
