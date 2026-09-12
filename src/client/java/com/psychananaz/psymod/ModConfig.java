@@ -38,6 +38,30 @@ public final class ModConfig {
                         .tooltip(literal("Settings that apply to the entire mod."))
                         .options(List.of(
                                 Option.<Boolean>createBuilder()
+                                        .name(literal("Enable Mod"))
+                                        .description(OptionDescription.of(literal(
+                                                "Pause mod features without changing their individual settings.")))
+                                        .binding(
+                                                GlobalConfig.DEFAULT_ENABLED,
+                                                () -> GlobalConfig.INSTANCE.enabled,
+                                                value -> GlobalConfig.INSTANCE.enabled = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build(),
+                                Option.<Boolean>createBuilder()
+                                        .name(literal("Show Notifications"))
+                                        .description(OptionDescription.of(literal(
+                                                "Show brief on-screen confirmations when settings are saved.")))
+                                        .binding(
+                                                GlobalConfig.DEFAULT_SHOW_NOTIFICATIONS,
+                                                () -> GlobalConfig.INSTANCE.showNotifications,
+                                                value -> GlobalConfig.INSTANCE.showNotifications = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build(),
+                                Option.<Boolean>createBuilder()
                                         .name(literal("Verbose Logging"))
                                         .description(OptionDescription.of(literal(
                                                 "Write additional diagnostic details to the game log.")))
@@ -121,6 +145,7 @@ public final class ModConfig {
             config.load();
             write(config);
         }
+        PsyModClient.showNotification(literal("psymod settings saved."));
     }
 
     private CommentedFileConfig openConfig() {

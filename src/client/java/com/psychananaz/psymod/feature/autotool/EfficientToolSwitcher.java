@@ -1,6 +1,7 @@
 package com.psychananaz.psymod.feature.autotool;
 
 import com.psychananaz.psymod.ModConfig;
+import com.psychananaz.psymod.GlobalConfig;
 import com.psychananaz.psymod.PsyMod;
 import com.mojang.blaze3d.platform.InputConstants;
 
@@ -30,7 +31,7 @@ public final class EfficientToolSwitcher {
     private static boolean toggleKeyWasDown;
 
     private static boolean isEnabled() {
-        return ModConfig.INSTANCE.useAutoTool;
+        return GlobalConfig.INSTANCE.enabled && ModConfig.INSTANCE.useAutoTool;
     }
 
     public static void initialize() {
