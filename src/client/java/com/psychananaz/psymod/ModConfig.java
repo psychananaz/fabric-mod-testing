@@ -10,7 +10,6 @@ import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
@@ -35,48 +34,44 @@ public final class ModConfig {
         return YetAnotherConfigLib.createBuilder()
                 .title(literal("psymod Settings"))
                 .category(ConfigCategory.createBuilder()
-                        .name(literal("psymod"))
-                        .group(OptionGroup.createBuilder()
-                                .name(literal("AutoTool"))
-                                .description(OptionDescription.of(literal(
-                                        "Automatically switch to the most efficient tool when breaking blocks.").withStyle(ChatFormatting.GRAY)))
-                                .collapsed(false)
-                                .options(List.of(
-                                        Option.<Boolean>createBuilder()
-                                                .name(literal("Enable AutoTool"))
-                                                .description(OptionDescription.of(literal(
-                                                        "Whether AutoTool is enabled.")))
-                                                .binding(
-                                                        DEFAULT_USE_AUTO_TOOL,
-                                                        () -> useAutoTool,
-                                                        value -> useAutoTool = value)
-                                                .controller(option -> BooleanControllerBuilder.create(option)
-                                                        .onOffFormatter()
-                                                        .coloured(true))
-                                                .build(),
-                                        Option.<Boolean>createBuilder()
-                                                .name(literal("Enable Keybind"))
-                                                .description(OptionDescription.of(literal(
-                                                        "Whether AutoTool can be toggled using the assigned key.")))
-                                                .binding(
-                                                        DEFAULT_USE_AUTO_TOOL_KEYBIND,
-                                                        () -> useAutoToolKeybind,
-                                                        value -> useAutoToolKeybind = value)
-                                                .controller(option -> BooleanControllerBuilder.create(option)
-                                                        .onOffFormatter()
-                                                        .coloured(true))
-                                                .build(),
-                                        ButtonOption.createBuilder()
-                                                .name(literal("Controls"))
-                                                .text(literal("Configure Keybind"))
-                                                .description(OptionDescription.of(literal(
-                                                        "Open Minecraft's Key Binds screen.")))
-                                                .action((screen, button) -> {
-                                                    Minecraft client = Minecraft.getInstance();
-                                                    client.gui.setScreen(new KeyBindsScreen(screen, client.options));
-                                                })
-                                                .build()))
-                                .build())
+                        .name(literal("AutoTool"))
+                        .tooltip(literal(
+                                "Automatically switch to the most efficient tool when breaking blocks.").withStyle(ChatFormatting.GRAY))
+                        .options(List.of(
+                                Option.<Boolean>createBuilder()
+                                        .name(literal("Enable AutoTool"))
+                                        .description(OptionDescription.of(literal(
+                                                "Whether AutoTool is enabled.")))
+                                        .binding(
+                                                DEFAULT_USE_AUTO_TOOL,
+                                                () -> useAutoTool,
+                                                value -> useAutoTool = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build(),
+                                Option.<Boolean>createBuilder()
+                                        .name(literal("Enable Keybind"))
+                                        .description(OptionDescription.of(literal(
+                                                "Whether AutoTool can be toggled using the assigned key.")))
+                                        .binding(
+                                                DEFAULT_USE_AUTO_TOOL_KEYBIND,
+                                                () -> useAutoToolKeybind,
+                                                value -> useAutoToolKeybind = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build(),
+                                ButtonOption.createBuilder()
+                                        .name(literal("Controls"))
+                                        .text(literal("Configure Keybind"))
+                                        .description(OptionDescription.of(literal(
+                                                "Open Minecraft's Key Binds screen.")))
+                                        .action((screen, button) -> {
+                                            Minecraft client = Minecraft.getInstance();
+                                            client.gui.setScreen(new KeyBindsScreen(screen, client.options));
+                                        })
+                                        .build()))
                         .build())
                 .save(this::save)
                 .build()
