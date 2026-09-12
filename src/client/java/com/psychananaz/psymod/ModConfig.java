@@ -38,7 +38,7 @@ public final class ModConfig {
                                         value -> useAutoTool = value)
                                 .controller(option -> BooleanControllerBuilder.create(option)
                                         .onOffFormatter()
-                                        .coloured(false))
+                                        .coloured(true))
                                 .build())
                         .build())
                 .save(this::save)
