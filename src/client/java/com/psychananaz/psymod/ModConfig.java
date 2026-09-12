@@ -34,6 +34,23 @@ public final class ModConfig {
         return YetAnotherConfigLib.createBuilder()
                 .title(literal("psymod Settings"))
                 .category(ConfigCategory.createBuilder()
+                        .name(literal("General"))
+                        .tooltip(literal("Settings that apply to the entire mod."))
+                        .options(List.of(
+                                Option.<Boolean>createBuilder()
+                                        .name(literal("Verbose Logging"))
+                                        .description(OptionDescription.of(literal(
+                                                "Write additional diagnostic details to the game log.")))
+                                        .binding(
+                                                GlobalConfig.DEFAULT_VERBOSE_LOGGING,
+                                                () -> GlobalConfig.INSTANCE.verboseLogging,
+                                                value -> GlobalConfig.INSTANCE.verboseLogging = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build()))
+                        .build())
+                .category(ConfigCategory.createBuilder()
                         .name(literal("AutoTool"))
                         .tooltip(literal(
                                 "Automatically switch to the most efficient tool when breaking blocks.").withStyle(ChatFormatting.GRAY))
@@ -119,6 +136,7 @@ public final class ModConfig {
         if (config.getComment("useAutoToolKeybind") == null) {
             config.setComment("useAutoToolKeybind", " Enable the AutoTool toggle key assigned in Minecraft's Controls menu.");
         }
+        GlobalConfig.INSTANCE.writeTo(config);
         config.save();
     }
 }

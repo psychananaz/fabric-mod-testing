@@ -53,6 +53,7 @@ public final class EfficientToolSwitcher {
                 && CLIENT.player != null && CLIENT.gui.screen() == null) {
             ModConfig.INSTANCE.useAutoTool = !ModConfig.INSTANCE.useAutoTool;
             ModConfig.INSTANCE.save();
+            PsyMod.logVerbose("AutoTool toggled {} using its keybind", ModConfig.INSTANCE.useAutoTool ? "on" : "off");
         }
         toggleKeyWasDown = toggleKey.isDown();
     }
