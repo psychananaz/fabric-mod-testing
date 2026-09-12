@@ -6,6 +6,7 @@ import net.fabricmc.api.ClientModInitializer;
 public final class PsyModClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
+		ModConfig.INSTANCE.load();
 		EfficientToolSwitcher.initialize();
 	}
 }

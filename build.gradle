@@ -45,6 +45,10 @@ dependencies {
 	implementation "com.terraformersmc:modmenu:${project.modmenu_version}"
     implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
 
+	def nightConfigVersion = '3.9.0'
+	implementation include("com.electronwill.night-config:core:${nightConfigVersion}")
+	implementation include("com.electronwill.night-config:toml:${nightConfigVersion}")
+
 	localRuntime 'net.covers1624:DevLogin:0.1.0.5'
 }
 

@@ -16,6 +16,10 @@
 		"client": [
 			"com.psychananaz.psymod.PsyModClient"
 		]
+		,
+		"modmenu": [
+			"com.psychananaz.psymod.ModMenuIntegration"
+		]
 	},
 	"depends": {
 		"fabricloader": ">=0.19.3",

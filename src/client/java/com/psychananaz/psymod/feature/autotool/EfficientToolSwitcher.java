@@ -1,5 +1,7 @@
 package com.psychananaz.psymod.feature.autotool;
 
+import com.psychananaz.psymod.ModConfig;
+
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -20,7 +22,9 @@ public final class EfficientToolSwitcher {
     private static final int HOTBAR_SIZE = 9;
     private static final float MINIMUM_TOOL_SPEED = 1.0f;
 
-    private static boolean enabled;
+    private static boolean isEnabled() {
+        return ModConfig.INSTANCE.useAutoTool;
+    }
 
     public static void initialize() {
         ClientTickEvents.START_CLIENT_TICK.register((_) -> tick());
@@ -34,7 +38,7 @@ public final class EfficientToolSwitcher {
             return;
         }
 
-        if (!enabled || !CLIENT.options.keyAttack.isDown() || CLIENT.gameMode == null) {
+        if (!isEnabled() || !CLIENT.options.keyAttack.isDown() || CLIENT.gameMode == null) {
             return;
         }
 
