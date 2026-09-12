@@ -16,9 +16,11 @@ import net.minecraft.client.gui.screens.Screen;
 public final class ModConfig {
 
     public static final boolean DEFAULT_USE_AUTO_TOOL = false;
+    public static final boolean DEFAULT_USE_AUTO_TOOL_KEYBIND = false;
     public static final ModConfig INSTANCE = new ModConfig();
     private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("psymod.toml");
     public boolean useAutoTool = DEFAULT_USE_AUTO_TOOL;
+    public boolean useAutoToolKeybind = DEFAULT_USE_AUTO_TOOL_KEYBIND;
 
     private ModConfig() {
     }
@@ -40,6 +42,18 @@ public final class ModConfig {
                                         .onOffFormatter()
                                         .coloured(true))
                                 .build())
+                        .option(Option.<Boolean>createBuilder()
+                                .name(literal("Enable Keybind"))
+                                .description(OptionDescription.of(literal(
+                                        "Toggle Auto Tool with a key. Assign it in Options > Controls > Key Binds > AutoTool.")))
+                                .binding(
+                                        DEFAULT_USE_AUTO_TOOL_KEYBIND,
+                                        () -> useAutoToolKeybind,
+                                        value -> useAutoToolKeybind = value)
+                                .controller(option -> BooleanControllerBuilder.create(option)
+                                        .onOffFormatter()
+                                        .coloured(true))
+                                .build())
                         .build())
                 .save(this::save)
                 .build()
@@ -53,9 +67,14 @@ public final class ModConfig {
             if (!(value instanceof Boolean enabled)) {
                 throw new IllegalStateException("useAutoTool must be a boolean in " + CONFIG_PATH);
             }
+            Object keybindValue = config.getOrElse("useAutoToolKeybind", DEFAULT_USE_AUTO_TOOL_KEYBIND);
+            if (!(keybindValue instanceof Boolean keybindEnabled)) {
+                throw new IllegalStateException("useAutoToolKeybind must be a boolean in " + CONFIG_PATH);
+            }
             useAutoTool = enabled;
+            useAutoToolKeybind = keybindEnabled;
 
-            if (!config.contains("useAutoTool")) {
+            if (!config.contains("useAutoTool") || !config.contains("useAutoToolKeybind")) {
                 write(config);
             }
         }
@@ -76,7 +95,11 @@ public final class ModConfig {
     private void write(CommentedFileConfig config) {
         config.set("useAutoTool", useAutoTool);
         if (config.getComment("useAutoTool") == null) {
-            config.setComment("useAutoTool", "Automatically switch to the most efficient tool when breaking blocks.");
+            config.setComment("useAutoTool", " Automatically switch to the most efficient tool when breaking blocks.");
+        }
+        config.set("useAutoToolKeybind", useAutoToolKeybind);
+        if (config.getComment("useAutoToolKeybind") == null) {
+            config.setComment("useAutoToolKeybind", " Enable the AutoTool toggle key assigned in Minecraft's Controls menu.");
         }
         config.save();
     }
