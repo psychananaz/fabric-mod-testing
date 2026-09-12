@@ -7,7 +7,7 @@
 	"authors": [
 		"psychananaz"
 	],
-	"license": "",
+	"license": "GPLv3",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
