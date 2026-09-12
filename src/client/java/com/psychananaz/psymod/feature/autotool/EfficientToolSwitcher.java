@@ -22,9 +22,6 @@ public final class EfficientToolSwitcher {
 
     private static boolean enabled;
 
-    private EfficientToolSwitcher() {
-    }
-
     public static void initialize() {
         ClientTickEvents.START_CLIENT_TICK.register((_) -> tick());
     }
