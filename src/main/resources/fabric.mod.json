@@ -1,0 +1,27 @@
+{
+	"schemaVersion": 1,
+	"id": "psymod",
+	"version": "${version}",
+	"name": "psymod",
+	"description": "",
+	"authors": [
+		"psychananaz"
+	],
+	"license": "CC0-1.0",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.psychananaz.psymod.PsyMod"
+		],
+		"client": [
+			"com.psychananaz.psymod.PsyModClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.19.3",
+		"minecraft": "~26.2",
+		"java": ">=25",
+		"fabric-api": "*",
+		"modmenu": ">=20.0.0"
+	}
+}
