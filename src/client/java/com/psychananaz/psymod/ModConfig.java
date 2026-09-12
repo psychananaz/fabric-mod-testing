@@ -1,9 +1,16 @@
 package com.psychananaz.psymod;
 
+import static net.minecraft.network.chat.Component.literal;
+
 import java.nio.file.Path;
 
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import dev.isxander.yacl3.api.ConfigCategory;
+import dev.isxander.yacl3.api.Option;
+import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.gui.screens.Screen;
 
 public final class ModConfig {
 
@@ -13,6 +20,27 @@ public final class ModConfig {
     public boolean useAutoTool = DEFAULT_USE_AUTO_TOOL;
 
     private ModConfig() {
+    }
+
+    public Screen createGui(Screen parent) {
+        return YetAnotherConfigLib.createBuilder()
+                .title(literal("Efficient Tool Switcher"))
+                .category(ConfigCategory.createBuilder()
+                        .name(literal("General"))
+                        .tooltip(literal(
+                                "Automatically switches to the most efficient tool for the block you are breaking."))
+                        .option(Option.<Boolean>createBuilder()
+                                .name(literal("Enable Efficient Tool Switching"))
+                                .binding(
+                                        DEFAULT_USE_AUTO_TOOL,
+                                        () -> useAutoTool,
+                                        value -> useAutoTool = value)
+                                .controller(BooleanControllerBuilder::create)
+                                .build())
+                        .build())
+                .save(this::save)
+                .build()
+                .generateScreen(parent);
     }
 
     public void load() {
