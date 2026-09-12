@@ -1,13 +1,13 @@
 {
 	"schemaVersion": 1,
 	"id": "psymod",
-	"version": "${version}",
+	"version": "0.0.1-dev.1",
 	"name": "psymod",
 	"description": "",
 	"authors": [
 		"psychananaz"
 	],
-	"license": "CC0-1.0",
+	"license": "",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
