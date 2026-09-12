@@ -9,9 +9,11 @@ import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.controls.KeyBindsScreen;
@@ -33,39 +35,45 @@ public final class ModConfig {
                 .title(literal("psymod Settings"))
                 .category(ConfigCategory.createBuilder()
                         .name(literal("psymod"))
-                        .option(Option.<Boolean>createBuilder()
-                                .name(literal("Auto Tool"))
+                        .group(OptionGroup.createBuilder()
+                                .name(literal("Auto Tool").withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD))
                                 .description(OptionDescription.of(literal(
-                                        "Automatically select the best tool in your hotbar while mining.")))
-                                .binding(
-                                        DEFAULT_USE_AUTO_TOOL,
-                                        () -> useAutoTool,
-                                        value -> useAutoTool = value)
-                                .controller(option -> BooleanControllerBuilder.create(option)
-                                        .onOffFormatter()
-                                        .coloured(true))
-                                .build())
-                        .option(Option.<Boolean>createBuilder()
-                                .name(literal("Enable Keybind"))
-                                .description(OptionDescription.of(literal(
-                                        "Allow your assigned key to toggle Auto Tool.")))
-                                .binding(
-                                        DEFAULT_USE_AUTO_TOOL_KEYBIND,
-                                        () -> useAutoToolKeybind,
-                                        value -> useAutoToolKeybind = value)
-                                .controller(option -> BooleanControllerBuilder.create(option)
-                                        .onOffFormatter()
-                                        .coloured(true))
-                                .build())
-                        .option(ButtonOption.createBuilder()
-                                .name(literal("Controls"))
-                                .text(literal("Configure Keybind"))
-                                .description(OptionDescription.of(literal(
-                                        "Open Minecraft's Key Binds screen. Find Toggle AutoTool under AutoTool.")))
-                                .action((screen, button) -> {
-                                    Minecraft client = Minecraft.getInstance();
-                                    client.gui.setScreen(new KeyBindsScreen(screen, client.options));
-                                })
+                                        "The right tool for every block.").withStyle(ChatFormatting.GRAY)))
+                                .collapsed(false)
+                                .option(Option.<Boolean>createBuilder()
+                                        .name(literal("Enable Auto Tool"))
+                                        .description(OptionDescription.of(literal(
+                                                "Automatically select the best tool in your hotbar while mining.")))
+                                        .binding(
+                                                DEFAULT_USE_AUTO_TOOL,
+                                                () -> useAutoTool,
+                                                value -> useAutoTool = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build())
+                                .option(Option.<Boolean>createBuilder()
+                                        .name(literal("Enable Keybind"))
+                                        .description(OptionDescription.of(literal(
+                                                "Allow your assigned key to toggle Auto Tool.")))
+                                        .binding(
+                                                DEFAULT_USE_AUTO_TOOL_KEYBIND,
+                                                () -> useAutoToolKeybind,
+                                                value -> useAutoToolKeybind = value)
+                                        .controller(option -> BooleanControllerBuilder.create(option)
+                                                .onOffFormatter()
+                                                .coloured(true))
+                                        .build())
+                                .option(ButtonOption.createBuilder()
+                                        .name(literal("Controls"))
+                                        .text(literal("Configure Keybind").withStyle(ChatFormatting.GOLD))
+                                        .description(OptionDescription.of(literal(
+                                                "Open Minecraft's Key Binds screen. Find Toggle AutoTool under AutoTool.")))
+                                        .action((screen, button) -> {
+                                            Minecraft client = Minecraft.getInstance();
+                                            client.gui.setScreen(new KeyBindsScreen(screen, client.options));
+                                        })
+                                        .build())
                                 .build())
                         .build())
                 .save(this::save)
