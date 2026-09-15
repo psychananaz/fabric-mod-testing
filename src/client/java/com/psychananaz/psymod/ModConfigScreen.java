@@ -8,6 +8,7 @@ import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
+import dev.isxander.yacl3.api.OptionGroup;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.BooleanControllerBuilder;
 import net.minecraft.ChatFormatting;
@@ -42,24 +43,31 @@ public final class ModConfigScreen {
                                         () -> config.verboseLogging, value -> config.verboseLogging = value)))
                         .build())
                 .category(ConfigCategory.createBuilder()
-                        .name(literal("AutoTool"))
-                        .tooltip(literal("Automatically switch to the most efficient tool when breaking blocks.")
+                        .name(literal("Features"))
+                        .tooltip(literal("Settings for individual mod features.")
                                 .withStyle(ChatFormatting.GRAY))
-                        .options(List.of(
-                                booleanOption("Enabled", "Whether AutoTool is enabled.",
-                                        ModConfig.DEFAULT_USE_AUTO_TOOL,
-                                        () -> config.useAutoTool, value -> config.useAutoTool = value),
-                                booleanOption("Bypass", "Prevents tool switching when holding the configured key.",
-                                        ModConfig.DEFAULT_ENABLE_BYPASS,
-                                        () -> config.enableBypass, value -> config.enableBypass = value),
-                                ButtonOption.createBuilder()
-                                        .name(literal("Controls"))
-                                        .text(literal("Open Key Binds").withColor(TextColor.GRAY))
-                                        .description(OptionDescription.of(literal("Open Minecraft's Key Binds screen.")))
-                                        .action((screen, button) -> {
-                                            Minecraft client = Minecraft.getInstance();
-                                            client.gui.setScreen(new KeyBindsScreen(screen, client.options));
-                                        })
+                        .groups(List.of(
+                                OptionGroup.createBuilder()
+                                        .name(literal("AutoTool"))
+                                        .description(OptionDescription.of(
+                                                literal("Automatic tool switching for block interactions.")))
+                                        .options(List.of(
+                                                booleanOption("Enabled", "Whether AutoTool is enabled.",
+                                                        ModConfig.DEFAULT_USE_AUTO_TOOL,
+                                                        () -> config.useAutoTool, value -> config.useAutoTool = value),
+                                                booleanOption("Bypass", "Prevents tool switching when holding the configured key.",
+                                                        ModConfig.DEFAULT_ENABLE_BYPASS,
+                                                        () -> config.enableBypass, value -> config.enableBypass = value),
+                                                ButtonOption.createBuilder()
+                                                        .name(literal("Controls"))
+                                                        .text(literal("Open Key Binds").withColor(TextColor.GRAY))
+                                                        .description(OptionDescription.of(
+                                                                literal("Open Minecraft's Key Binds screen.")))
+                                                        .action((screen, button) -> {
+                                                            Minecraft client = Minecraft.getInstance();
+                                                            client.gui.setScreen(new KeyBindsScreen(screen, client.options));
+                                                        })
+                                                        .build()))
                                         .build()))
                         .build())
                 .save(() -> {

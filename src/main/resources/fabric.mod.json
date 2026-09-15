@@ -8,7 +8,7 @@
 		"psychananaz"
 	],
 	"license": "GPLv3",
-	"environment": "*",
+	"environment": "client",
 	"entrypoints": {
 		"main": [
 			"com.psychananaz.psymod.PsyMod"

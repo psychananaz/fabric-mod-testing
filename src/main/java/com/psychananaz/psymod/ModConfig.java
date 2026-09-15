@@ -2,7 +2,7 @@ package com.psychananaz.psymod;
 
 import java.nio.file.Path;
 
-import com.electronwill.nightconfig.core.file.CommentedFileConfig;
+import com.electronwill.nightconfig.core.file.FileConfig;
 import net.fabricmc.loader.api.FabricLoader;
 
 public final class ModConfig {
@@ -24,7 +24,7 @@ public final class ModConfig {
     }
 
     public void load() {
-        try (CommentedFileConfig config = openConfig()) {
+        try (FileConfig config = openConfig()) {
             config.load();
             enabled = readBoolean(config, "general.enabled", DEFAULT_ENABLED);
             showNotifications = readBoolean(config, "general.showNotifications", DEFAULT_SHOW_NOTIFICATIONS);
@@ -41,44 +41,26 @@ public final class ModConfig {
     }
 
     public void save() {
-        try (CommentedFileConfig config = openConfig()) {
+        try (FileConfig config = openConfig()) {
             config.load();
             write(config);
         }
     }
 
-    private CommentedFileConfig openConfig() {
-        return CommentedFileConfig.builder(CONFIG_PATH).sync().build();
+    private FileConfig openConfig() {
+        return FileConfig.builder(CONFIG_PATH).sync().build();
     }
 
-    private void write(CommentedFileConfig config) {
+    private void write(FileConfig config) {
         config.set("general.enabled", enabled);
-        if (config.getComment("general.enabled") == null) {
-            config.setComment("general.enabled", " Enable mod features without changing their individual settings.");
-        }
         config.set("general.showNotifications", showNotifications);
-        if (config.getComment("general.showNotifications") == null) {
-            config.setComment("general.showNotifications", " Show brief on-screen confirmations when settings are saved.");
-        }
         config.set("general.verboseLogging", verboseLogging);
-        if (config.getComment("general.verboseLogging") == null) {
-            config.setComment("general.verboseLogging", " Log additional diagnostic details for all mod features.");
-        }
-
         config.set("useAutoTool", useAutoTool);
-        if (config.getComment("useAutoTool") == null) {
-            config.setComment("useAutoTool", " Automatically switch to the most efficient tool when breaking blocks.");
-        }
-
         config.set("enableBypass", enableBypass);
-        if (config.getComment("enableBypass") == null) {
-            config.setComment("enableBypass", " Enable bypass functionality.");
-        }
-
         config.save();
     }
 
-    private boolean readBoolean(CommentedFileConfig config, String key, boolean defaultValue) {
+    private boolean readBoolean(FileConfig config, String key, boolean defaultValue) {
         Object value = config.getOrElse(key, defaultValue);
         if (!(value instanceof Boolean setting)) {
             throw new IllegalStateException(key + " must be a boolean in " + CONFIG_PATH);
